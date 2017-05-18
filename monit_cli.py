@@ -24,7 +24,8 @@ res = []
 for i in args.server_list:
     host, port = i.split(':')
 
-    with urllib.request.urlopen('http://{}:{}'.format(host, port)) as f:
+    # try:
+    with urllib.request.urlopen('http://{}:{}'.format(host, port), timeout=3) as f:
         data = f.read()
 
         regex = b"\{\"result\"\:\s(?P<data>\[.*\])\}"
@@ -33,6 +34,7 @@ for i in args.server_list:
         for matchNum, match in enumerate(matches):
             val = match.group(matchNum).decode('utf-8')
             res.append(json.loads(val).get('result'))
+
 
 
 s = 'Pool: {pool}\nWork time: {uptime_human:.2f} hours\nCoin: {coin}\nTotal hashrate: {hash_total} Mh/s\nServer speed: {share_per_min:.2f} (shares in 1 minute)\nGood shares: {good_share}\nBad shares: {bad_share}\nMiner version: {ver}\n{gpu_stat}\n{hash_total_alarm}'
@@ -57,9 +59,12 @@ for rid, i in enumerate(res):
         hash_total=hashrate_total,
         good_share=good_count,
         bad_share=int(i[2].split(';')[2]),
-        share_per_min=good_count / uptime,
+        share_per_min=0,
         gpu=dict(),
     )
+
+    if uptime > 0:
+        d['share_per_min'] = good_count / uptime
 
     if hashrate_total < args.target_hashrate[rid]:
         d['hash_total_alarm'] = '[ALARM] Current hashrate is {} and less than {} !!!!!!!!!\n'.format(hashrate_total, args.target_hashrate[rid])
