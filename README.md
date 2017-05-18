@@ -2,6 +2,7 @@ Rig monitoring tool
 ===================
 
 CLI interface for claymore's dual miner 9.x
+
 Tested on claymore 9.3
 
 Usage instructions
