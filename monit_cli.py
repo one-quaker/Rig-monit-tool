@@ -1,8 +1,11 @@
 import urllib.request
+from urllib.error import HTTPError, URLError
 import json
 import re
 import sys
 from pprint import pprint
+from socket import timeout
+import logging
 import argparse
 
 
@@ -23,13 +26,21 @@ res = []
 
 for i in args.server_list:
     host, port = i.split(':')
+    url = 'http://{}:{}'.format(host, port)
 
-    # try:
-    with urllib.request.urlopen('http://{}:{}'.format(host, port), timeout=3) as f:
-        data = f.read()
+    try:
+        resp = urllib.request.urlopen(url, timeout=2).read()
+    except (HTTPError, URLError) as error:
+        logging.error('Data of not retrieved. Error: {}\nURL: {}\n'.format(error, url))
+    except timeout:
+        logging.error('Time out. URL: {}\n'.format(url))
+    else:
+        pass
+        if args.debug:
+            print('GET ' + url)
 
         regex = b"\{\"result\"\:\s(?P<data>\[.*\])\}"
-        matches = re.finditer(regex, data, re.MULTILINE)
+        matches = re.finditer(regex, resp, re.MULTILINE)
 
         for matchNum, match in enumerate(matches):
             val = match.group(matchNum).decode('utf-8')
