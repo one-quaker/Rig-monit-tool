@@ -6,7 +6,18 @@ Tested on claymore 9.3
 
 Usage instructions
 ==================
-Run "python3 monit_cli.py --help" to see options
+Linux users:
+* just run `python3 monit_cli.py --help` to see options
+
+Mac users:
+* install [brew](https://brew.sh/)
+* install python `brew install python3`
+* run `python3 monit_cli.py --help`
+
+Windows users:
+* download and install latest stable version of [python 3](https://www.python.org/downloads/windows/)
+* press Win+R, type `cmd`, press ENTER key
+* run `python3 C:\PATH_TO_REPO_FOLDER\monit_cli.py --help`
 
 Example (full report):
 ======================
